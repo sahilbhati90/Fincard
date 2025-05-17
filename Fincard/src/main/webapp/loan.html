@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loan Eligibility Checker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #f0f0f0;
+    }
+    html, body {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  box-sizing: border-box; /* Ensure consistent box-sizing */
+  height: 100%; /* Ensure the body takes up the full height */
+}
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 20px;
+      background-color: rgba(15, 65, 167, 0.918);
+      box-shadow: 0 4px 6px rgba(1, 6, 12, 0.981);
+      color: white;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 5px;
+      padding: 10px;
+      background-color: rgb(0, 0, 0);
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: rgb(255, 255, 255);
+      transition: all 0.3s ease;
+    }
+
+    .logo {
+      height: 60px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    /* Nav Menu */
+    .nav-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      height: 100vh;
+      width: 240px;
+      background-color: #040404;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(1, 6, 12, 0.981);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between; /* Space between menu items and footer */
+      padding-top: 5rem;
+      transition: left 0.3s ease;
+    }
+
+    .nav-menu.active {
+      left: 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+      padding: 15px;
+    }
+
+    .nav-menu li {
+      margin: 30px 0;
+    }
+
+    .nav-menu li a {
+      text-decoration: none;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      background-color: #1a1a1a;
+      border: 2px solid transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .nav-menu li a i {
+      margin-right: 10px;
+    }
+
+    .nav-menu li a:hover {
+      background-color: #00bfff;
+      border-color: #00bfff;
+      color: white;
+    }
+
+    /* Footer in Nav Menu */
+    .nav-footer {
+      width: 100%;
+      padding: 10px;
+      background-color: #1a1a1a91;
+      color: white;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid #33333300;
+    }
+
+    /* Animate Hamburger */
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+ 
+
+
+
+.container {
+  background: #fff;
+  
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  animation: slideUp 0.7s ease-in-out;
+  margin-top: 20px;
+  margin-left: auto; /* Push the container to the right */
+  margin-right: auto; /
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+form label {
+  display: block;
+  margin-top: 10px;
+  color: #444;
+  font-weight: 600;
+}
+
+form input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background-color: #333;
+}
+
+.result-box {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  text-align: center;
+  font-weight: bold;
+  display: none;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 500px) {
+  .container {
+    padding: 20px;
+  }
+}
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    margin-bottom: 20px;
+}
+
+.footer-links a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer p {
+    font-size: 14px;
+    color: #aaa;
+    margin: 0;
+}
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <img src="Images/Fin_Card-removebg-preview.png" alt="Logo" class="logo">
+  </div>
+
+  <div class="nav-menu" id="nav-menu">
+    
+    <ul>
+        <li><a href="index.jsp"><i class="fas fa-home"></i>Home</a></li>
+        <li><a href="account.jsp"><i class="fas fa-user"></i>Account</a></li>
+        <li><a href="dashboard.html"><i class="fas fa-tv"></i>Dashboard</a></li>
+        <li><a href="transaction.html"><i class="fas fa-bank"></i>Transaction</a></li>
+        <li><a href="cards.html"><i class="fas fa-wallet"></i>Cards</a></li>
+        <li><a href="loan.html"><i class="fas fa-dollar"></i>Loan Eligibility</a></li>
+        <li><a href="index.jsp"><i class="fas fa-fire"></i>Logout</a></li>
+    </ul>
+    <div class="nav-footer">
+      &copy; 2025 Fincard. All rights reserved.
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Loan Eligibility Checker</h1>
+    <form id="loanForm" class="animated-form">
+      <label for="income">Monthly Income (₹)</label>
+      <input type="number" id="income" required />
+
+      <label for="loan">Loan Amount (₹)</label>
+      <input type="number" id="loan" required />
+
+      <label for="credit">Credit Score</label>
+      <input type="number" id="credit" min="300" max="900" required />
+
+      <button type="submit">Check Eligibility</button>
+    </form>
+    <div id="result" class="result-box"></div>
+  </div>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+      <p>&copy; 2023 Fincard. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    // Select the hamburger and nav menu
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+
+    // Add click event listener to toggle classes
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+    const form = document.getElementById('loanForm');
+const result = document.getElementById('result');
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const income = parseFloat(document.getElementById('income').value);
+  const loan = parseFloat(document.getElementById('loan').value);
+  const credit = parseInt(document.getElementById('credit').value);
+
+  let eligible = false;
+  let message = "";
+
+  // Basic logic for eligibility
+  if (credit >= 700 && income >= loan / 10) {
+    eligible = true;
+    message = "✅ You are eligible for the loan!";
+    result.style.backgroundColor = "#d4edda"; // light green
+    result.style.color = "#155724";
+  } else if (credit >= 600 && income >= loan / 8) {
+    eligible = true;
+    message = "⚠️ You are conditionally eligible. Additional documentation or guarantor may be required.";
+    result.style.backgroundColor = "#fff3cd"; // light yellow
+    result.style.color = "#856404";
+  } else {
+    message = "❌ Sorry, you are not eligible for the loan.";
+    result.style.backgroundColor = "#f8d7da"; // light red
+    result.style.color = "#721c24";
+  }
+
+  // Show result
+  result.textContent = message;
+  result.style.display = 'block';
+});
+
+  </script>
+</body>
+</html>

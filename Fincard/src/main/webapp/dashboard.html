@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinFlow Dashboard</title>
+    <style>:root {
+        --primary-color: #4270f4;
+        --primary-light: #edf0fb;
+        --primary-dark: #0f2a65;
+        --secondary-color: #3b3f5c;
+        --gray-light: #f5f7ff;
+        --gray-medium: #e6e9f4;
+        --gray-dark: #828795;
+        --danger: #f36c6c;
+        --success: #2dbf78;
+        --white: #ffffff;
+        --text-primary: #262a39;
+        --text-secondary: #6c7380;
+        --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        --sidebar-width: 280px;
+        --header-height: 80px;
+        --border-radius: 18px;
+      }
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+      }
+    
+      body {
+        background-color: #f0f0f0;
+      }
+    
+      /* Navbar */
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 20px;
+        background-color: rgba(15, 65, 167, 0.918);
+        box-shadow: 0 4px 6px rgba(1, 6, 12, 0.981);
+        color: white;
+        position: relative;
+        z-index: 1000;
+      }
+    
+      .hamburger {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+  padding: 10px;
+  background-color: rgb(0, 0, 0);
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1100; /* Ensure it stays above the nav menu */
+}
+    
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: rgb(255, 255, 255);
+  transition: all 0.3s ease;
+}
+      .logo {
+        height: 60px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+.nav-menu {
+  position: fixed; /* Fix the menu to the viewport */
+  top: 0;
+  left: -100%; /* Hidden by default */
+  height: 100vh;
+  width: 240px;
+  background-color: #040404;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(1, 6, 12, 0.981);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Space between menu items and footer */
+  padding-top: 5rem;
+  transition: left 0.3s ease; /* Smooth slide-in effect */
+  z-index: 1000; /* Ensure it overlaps the main content */
+}
+      
+      .nav-menu.active {
+        left: 0; /* Slide in from the left */
+      }
+    
+      .nav-menu ul {
+        list-style: none;
+        padding: 15px;
+      }
+    
+      .nav-menu li {
+        margin: 30px 0;
+      }
+    
+      .nav-menu li a {
+        text-decoration: none;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 10px 20px;
+        background-color: #1a1a1a;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+    
+      .nav-menu li a i {
+        margin-right: 10px;
+      }
+    
+      .nav-menu li a:hover {
+        background-color: #00bfff;
+        border-color: #00bfff;
+        color: white;
+      }
+    
+      /* Footer in Nav Menu */
+      .nav-footer {
+        width: 100%;
+        padding: 10px;
+        background-color: #1a1a1a91;
+        color: white;
+        text-align: center;
+        font-size: 0.9rem;
+        border-top: 1px solid #33333300;
+      }
+    
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      .hamburger.active span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }ure the container shifts when the sidebar is active */
+    .container {
+        margin-left: 0; /* Default position */
+        transition: margin-left 0.3s ease; /* Smooth transition */
+      }
+      
+      .container.shifted {
+        margin-left: var(--sidebar-width); /* Shift the container to the right */
+      }
+      
+      /* Sidebar styles */
+     
+      /* Content Layout */
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: 3fr 1.2fr;
+        gap: 30px;
+        margin-top: 80px; /* Adjust the gap as needed */
+  z-index: 1; 
+      }
+    
+      
+      .dashboard-main {
+        display: grid;
+        gap: 30px;
+      }
+      
+      /* Transfer Cards */
+      .transfer-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-bottom: 30px;
+      }
+      
+      .transfer-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .transfer-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      }
+      
+      .transfer-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 0;
+        background:#000000;
+        transition: height 0.3s ease;
+      }
+      
+      .transfer-card:hover::before {
+        height: 100%;
+      }
+      
+      .card-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        background-color: var(--primary-light);
+        color: black;
+        font-size: 20px;
+        transition: all 0.3s ease;
+      }
+      
+      .transfer-card:hover .card-icon {
+        transform: scale(1.1);
+        background-color: black;
+        color: var(--white);
+      }
+      
+      .card-title {
+        font-size: 15px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+      
+      .card-amount {
+        font-size: 26px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #262a39, #4270f4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      /* Dashboard Sidebar */
+      .dashboard-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+      
+      /* Saved This Month Card */
+      .savings-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 30px;
+        box-shadow: var(--card-shadow);
+        height: auto;
+        flex-grow: 0;
+      }
+      
+      .savings-title {
+        font-size: 17px;
+        color: black;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+      
+      .savings-title::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: black;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      
+      .savings-amount {
+        font-size: 40px;
+        font-weight: 800;
+        margin-bottom: 25px;
+        background: black;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+        display: inline-block;
+      }
+      
+      .savings-amount::after {
+        content: "";
+        position: absolute;
+        height: 3px;
+        width: 40px;
+        background: black;
+        bottom: 0;
+        left: 5px;
+        border-radius: 3px;
+      }
+      
+      .time-filter {
+        display: flex;
+        margin-bottom: 25px;
+        background-color: rgba(0, 0, 0, 0);
+        border-radius: 30px;
+        padding: 5px;
+      }
+      
+      .time-option {
+        padding: 8px 18px;
+        background: none;
+        border: none;
+        color: black;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+      
+      .time-option:hover {
+        color: rgb(0, 98, 255);
+      }
+      
+      .time-option.active {
+        background-color: rgb(0, 0, 0);
+        color: var(--white);
+        font-weight: 600;
+        box-shadow: 0 5px 10px rgba(66, 112, 244, 0.3);
+      }
+      
+      .chart-container {
+        height: 200px;
+        position: relative;
+        margin: 0 -15px;
+      }
+      
+      .chart {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      
+      .chart-line-path {
+        fill: none;
+        stroke: rgb(0, 0, 0);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        filter: drop-shadow(0 5px 5px rgba(66, 112, 244, 0.2));
+    }
+      
+    .chart-area {
+        fill: url(#gradientFill);
+        opacity: 0.25;
+      }
+      
+      .timeline {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding: 0 10px;
+      }
+      
+      .month {
+        font-size: 14px;
+        color: rgb(0, 0, 0);
+        font-weight: 500;
+        padding: 5px 10px;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      
+      .month:hover {
+        color: black;
+        background-color: var(--primary-light);
+      }
+      
+      .month.active {
+        color: black;
+        font-weight: 600;
+        position: relative;
+        background-color: var(--primary-light);
+      }
+      
+      .month.active::after {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 3px solid var(--white);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      }
+      
+      /* Promo Card */
+      .promo-card {
+        background: linear-gradient(135deg, var(--primary-light), #e6ecff);
+        border-radius: var(--border-radius);
+        padding: 35px;
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: var(--card-shadow);
+      }
+      
+      .promo-card::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.05)
+        );
+        border-radius: 50%;
+        top: -150px;
+        right: -150px;
+      }
+      
+      .promo-info {
+        max-width: 50%;
+        z-index: 1;
+      }
+      
+      .promo-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, var(--text-primary), var(--primary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      .promo-desc {
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      
+      .promo-btn {
+        background-color:#000000;
+        color: var(--white);
+        border: none;
+        border-radius: 30px;
+        padding: 14px 30px;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        box-shadow: 0 8px 15px rgba(44, 100, 252, 0.422);
+        transition: all 0.3s ease;
+      }
+      
+      .promo-btn:hover {
+        background-color: #000000;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(66, 112, 244, 0.4);
+      }
+      
+      .credit-card {
+        background: linear-gradient(135deg, #000000, #0f3bb5);
+        width: 320px;
+        height: 200px;
+        border-radius: 20px;
+        padding: 25px;
+        color: var(--white);
+        position: relative;
+        box-shadow: 0 15px 30px rgba(66, 112, 244, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s ease;
+        transform: rotate(5deg);
+      }
+      
+      .credit-card:hover {
+        transform: rotate(5deg) translateY(-10px);
+        box-shadow: 0 20px 40px rgba(66, 112, 244, 0.4);
+      }
+      
+      .card-brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .card-type {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 1px;
+      }
+      
+      .card-logo {
+        display: flex;
+        gap: 5px;
+      }
+      
+      .card-logo-circle {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      
+      .card-logo-circle:nth-child(2) {
+        opacity: 0.7;
+        transform: translateX(-8px);
+      }
+      
+      .card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAwaDMwMHYxODBIMHoiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSIxNTAiIHI9IjgwIiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9Ii4xIi8+PGNpcmNsZSBjeD0iNTAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjEiLz48L3N2Zz4=");
+        opacity: 0.15;
+        mix-blend-mode: soft-light;
+        border-radius: 20px;
+      }
+      
+      .card-number {
+        font-size: 22px;
+        letter-spacing: 3px;
+        font-weight: 500;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      
+      .card-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+      }
+      
+      .card-holder {
+        font-size: 12px;
+      }
+      
+      .card-holder-label {
+        opacity: 0.7;
+        font-size: 10px;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+      }
+      
+      .card-holder-name {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 1px;
+      }
+      
+      .card-expiry {
+        font-size: 12px;
+        text-align: right;
+      }
+      
+      .card-expiry-label {
+        opacity: 0.7;
+        font-size: 10px;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+      }
+      
+      .card-expiry-date {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      
+      /* Transaction Section */
+      .transaction-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+      }
+      
+      .transaction-card,
+      .plan-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        padding: 25px;
+        box-shadow: var(--card-shadow);
+      }
+      
+      .plan-card {
+        background: linear-gradient(135deg, #13296a, #16378e);
+        color: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+        padding: 30px;
+        height: 100%;
+      }
+      
+      .plan-card::before {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        top: -200px;
+        right: -200px;
+      }
+      
+      .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 25px;
+        position: relative;
+        display: inline-block;
+      }
+      
+      .section-title::after {
+        content: "";
+        position: absolute;
+        height: 3px;
+        width: 40%;
+        background-color: var(--primary-color);
+        bottom: -8px;
+        left: 0;
+        border-radius: 3px;
+      }
+      
+      .transaction-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--gray-medium);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+      }
+      
+      .transaction-item:hover {
+        transform: translateX(5px);
+      }
+      
+      .transaction-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      
+      .transaction-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--gray-medium);
+        color: black;
+        font-size: 18px;
+        transition: all 0.3s ease;
+      }
+      
+      .transaction-item:hover .transaction-icon {
+        transform: scale(1.1);
+        background-color: var(--primary-light);
+        color: white;
+      }
+      
+      .transaction-icon img {
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+      }
+      
+      .transaction-content {
+        flex: 1;
+        margin-left: 15px;
+      }
+      
+      .transaction-title {
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+      
+      .transaction-time {
+        color: var(--text-secondary);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+      }
+      
+      .transaction-time i {
+        margin-right: 5px;
+        font-size: 12px;
+      }
+      
+      .transaction-amount {
+        font-weight: 600;
+        font-size: 17px;
+        transition: all 0.2s ease;
+      }
+      
+      .transaction-item:hover .transaction-amount {
+        transform: scale(1.1);
+      }
+      
+      .transaction-amount.negative {
+        color: var(--danger);
+      }
+      
+      .transaction-amount.positive {
+        color: var(--success);
+      }
+      
+      /* Plan Card */
+      .plan-info {
+        padding: 25px 0;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .plan-title {
+        font-size: 16px;
+        opacity: 0.8;
+        margin-bottom: 10px;
+      }
+      
+      .plan-status {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      
+      .plan-progress {
+        position: relative;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        margin-right: 30px;
+      }
+      
+      .plan-progress::before {
+        content: "";
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        border-radius: 50%;
+        background: var(--primary-dark);
+      }
+      
+      .plan-progress::after {
+        content: "";
+        position: absolute;
+        width: 150%;
+        height: 150%;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.8;
+        }
+        70% {
+          transform: scale(1);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+      }
+      
+      .plan-percentage {
+        position: relative;
+        font-size: 28px;
+        font-weight: 700;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 1400px) {
+        .dashboard-container {
+          grid-template-columns: 1fr;
+        }
+      
+        .savings-card {
+          grid-column: span 3;
+        }
+      
+        .dashboard-sidebar {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      
+        .credit-card {
+          width: 280px;
+          height: 170px;
+        }
+      }
+      
+      @media (max-width: 1200px) {
+        .main-content {
+          padding: 30px;
+        }
+      
+        .transfer-cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      
+        .transaction-section {
+          grid-template-columns: 1fr;
+        }
+      
+        .plan-card {
+          grid-column: span 1;
+        }
+      
+        .promo-card {
+          flex-direction: column;
+          gap: 30px;
+        }
+      
+        .promo-info {
+          max-width: 100%;
+        }
+      
+        .credit-card {
+          width: 100%;
+          transform: rotate(0);
+        }
+      
+        .credit-card:hover {
+          transform: translateY(-10px) rotate(0);
+        }
+      }
+      
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 80px;
+          padding: 25px 0;
+        }
+      
+        .logo {
+          padding: 0 15px 25px;
+          display: flex;
+          justify-content: center;
+        }
+      
+        .logo svg text {
+          display: none;
+        }
+      
+        .nav-item span,
+        .premium-box h3 {
+          display: none;
+        }
+      
+        .nav-item {
+          justify-content: center;
+          padding: 15px;
+        }
+      
+        .nav-item i {
+          margin-right: 0;
+          font-size: 20px;
+        }
+      
+        .premium-box {
+          padding: 20px 15px;
+          margin: 15px;
+        }
+      
+        .premium-btn {
+          padding: 8px 12px;
+          font-size: 12px;
+        }
+      
+        .main-content {
+          margin-left: 80px;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .main-content {
+          padding: 20px;
+        }
+      
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      
+        .header-right {
+          width: 100%;
+          margin-top: 25px;
+          justify-content: space-between;
+        }
+      
+        .search-bar {
+          width: 50%;
+        }
+      
+        .transfer-cards,
+        .dashboard-sidebar {
+          grid-template-columns: 1fr;
+        }
+      
+        .savings-card {
+          height: auto;
+        }
+      
+        .welcome-title {
+          font-size: 24px;
+        }
+      
+        .savings-amount {
+          font-size: 32px;
+        }
+      
+        .transaction-section {
+          gap: 20px;
+        }
+      }
+      
+      @media (max-width: 576px) {
+        .search-bar {
+          width: 100%;
+          margin-top: 15px;
+        }
+      
+        .header-right {
+          flex-wrap: wrap;
+          gap: 15px;
+        }
+      
+        .time-filter {
+          overflow-x: auto;
+          padding: 5px;
+        }
+      
+        .time-option {
+          padding: 8px 12px;
+          white-space: nowrap;
+        }
+      
+        .promo-title {
+          font-size: 22px;
+        }
+      
+        .promo-desc {
+          font-size: 14px;
+        }
+      
+        .promo-btn {
+          padding: 12px 20px;
+        }
+      }
+        .dashboard-container {
+  margin-top: 30px; /* Add gap between navbar and main content */
+}
+.footer {
+    background-color: #000;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    margin-bottom: 20px;
+}
+
+.footer-links a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer p {
+    font-size: 14px;
+    color: #aaa;
+    margin: 0;
+}
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      
+    />
+    
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <img src="Images/Fin_Card-removebg-preview.png" alt="Logo" class="logo">
+    </div>
+  
+    <div class="nav-menu" id="nav-menu">
+      
+      <ul>
+          <li><a href="index.jsp"><i class="fas fa-home"></i>Home</a></li>
+          <li><a href="account.jsp"><i class="fas fa-user"></i>Account</a></li>
+          <li><a href="dashboard.html"><i class="fas fa-tv"></i>Dashboard</a></li>
+          <li><a href="transaction.html"><i class="fas fa-bank"></i>Transaction</a></li>
+          <li><a href="cards.html"><i class="fas fa-wallet"></i>Cards</a></li>
+          <li><a href="loan.html"><i class="fas fa-dollar"></i>Loan Eligibility</a></li>
+          <li><a href="index.jsp"><i class="fas fa-fire"></i>Logout</a></li>
+      </ul>
+      <div class="nav-footer">
+        &copy; 2025 Fincard. All rights reserved.
+      </div>
+    </div>
+
+      
+
+    <!-- Main Content -->
+    
+
+      <!-- Dashboard Container -->
+      <div class="dashboard-container">
+        <!-- Main Dashboard Content -->
+        <div class="dashboard-main">
+          <!-- Transfer Cards -->
+          <div class="transfer-cards">
+            <div class="transfer-card">
+              <div class="card-icon">
+                <i class="fas fa-credit-card"></i>
+              </div>
+              <p class="card-title">Digital Payments</p>
+              <h2 class="card-amount">$1,875</h2>
+            </div>
+
+            <div class="transfer-card">
+              <div class="card-icon">
+                <i class="fas fa-exchange-alt"></i>
+              </div>
+              <p class="card-title">External Transfers</p>
+              <h2 class="card-amount">$263</h2>
+            </div>
+
+            <div class="transfer-card">
+              <div class="card-icon">
+                <i class="fas fa-university"></i>
+              </div>
+              <p class="card-title">Domestic Transfers</p>
+              <h2 class="card-amount">$394</h2>
+            </div>
+          </div>
+
+          <!-- Promo Card -->
+          <div class="promo-card">
+            <div class="promo-info">
+              <h2 class="promo-title">Smart money management</h2>
+              <p class="promo-desc">
+                Experience global transactions with zero hidden charges. Secure,
+                transfer and manage your finances with confidence.
+              </p>
+              <button class="promo-btn">Explore Features</button>
+            </div>
+
+            <div class="credit-card">
+              <div class="card-overlay"></div>
+              <div class="card-brand">
+                <div class="card-type">Platinum Edge</div>
+                <div class="card-logo">
+                  <div class="card-logo-circle"></div>
+                  <div class="card-logo-circle"></div>
+                </div>
+              </div>
+
+              <div class="card-number">4832 7691 2450 8115</div>
+
+              <div class="card-details">
+                <div class="card-holder">
+                  <div class="card-holder-label">CARD HOLDER</div>
+                  <div class="card-holder-name">Alexander Morgan</div>
+                </div>
+                <div class="card-expiry">
+                  <div class="card-expiry-label">EXPIRES</div>
+                  <div class="card-expiry-date">09/27</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction & Transfer Sections -->
+          <div class="transaction-section">
+            <div class="transaction-card">
+              <h3 class="section-title">Recent Expenses</h3>
+
+              <div class="transaction-item">
+                <div class="transaction-icon">
+                  <i class="fas fa-hamburger"></i>
+                </div>
+                <div class="transaction-content">
+                  <div class="transaction-title">Dining Out</div>
+                  <div class="transaction-time">
+                    <i class="far fa-clock"></i> Today, 14:45
+                  </div>
+                </div>
+                <div class="transaction-amount negative">-$78</div>
+              </div>
+
+              <div class="transaction-item">
+                <div class="transaction-icon">
+                  <i class="fas fa-tshirt"></i>
+                </div>
+                <div class="transaction-content">
+                  <div class="transaction-title">Retail Purchase</div>
+                  <div class="transaction-time">
+                    <i class="far fa-clock"></i> Yesterday, 16:08
+                  </div>
+                </div>
+                <div class="transaction-amount negative">-$125</div>
+              </div>
+            </div>
+
+            <div class="transaction-card">
+              <h3 class="section-title">Your Connections</h3>
+
+              <div class="transaction-item">
+                <div class="transaction-icon">
+                  <img
+                    src="https://i.pravatar.cc/100?img=12"
+                    alt="Lisa Johnson"
+                  />
+                </div>
+                <div class="transaction-content">
+                  <div class="transaction-title">Lisa Johnson</div>
+                  <div class="transaction-time">
+                    <i class="far fa-clock"></i> Today, 09:35
+                  </div>
+                </div>
+                <div class="transaction-amount positive">+$85</div>
+              </div>
+
+              <div class="transaction-item">
+                <div class="transaction-icon">
+                  <img
+                    src="https://i.pravatar.cc/100?img=11"
+                    alt="Michael Torres"
+                  />
+                </div>
+                <div class="transaction-content">
+                  <div class="transaction-title">Michael Torres</div>
+                  <div class="transaction-time">
+                    <i class="far fa-clock"></i> Monday, 17:45
+                  </div>
+                </div>
+                <div class="transaction-amount negative">-$42</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Sidebar -->
+        <div class="dashboard-sidebar">
+            <div class="savings-card">
+              <h3 class="savings-title">Monthly Savings</h3>
+              <div class="savings-amount">$467.5</div>
+  
+              <div class="time-filter">
+               
+              
+                <button class="time-option active">Monthly</button>
+               
+              </div>
+  
+              <div class="chart-container">
+                <svg
+                  class="chart"
+                  viewBox="0 0 300 100"
+                  preserveAspectRatio="none"
+                >
+                  <defs>
+                    <linearGradient
+                      id="gradientFill"
+                      x1="0%"
+                      y1="0%"
+                      x2="0%"
+                      y2="100%"
+                    >
+                      <stop offset="0%" stop-color="#4270F4" stop-opacity="0.7" />
+                      <stop
+                        offset="100%"
+                        stop-color="#4270F4"
+                        stop-opacity="0.1"
+                      />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    class="chart-line-path"
+                    d="M0,80 C20,70 40,30 60,60 C80,90 100,40 120,30 C140,20 160,50 180,20 C200,30 220,60 240,80 C260,60 280,40 300,60"
+                  ></path>
+                  <path
+                    class="chart-area"
+                    d="M0,80 C20,70 40,30 60,60 C80,90 100,40 120,30 C140,20 160,50 180,20 C200,30 220,60 240,80 C260,60 280,40 300,60 L300,100 L0,100 Z"
+                  ></path>
+                  <circle
+                    cx="180"
+                    cy="20"
+                    r="6"
+                    fill="#4270F4"
+                    stroke="#ffffff"
+                    stroke-width="3"
+                  />
+                </svg>
+            </div>
+
+            <div class="timeline">
+              <div class="month">Oct</div>
+              <div class="month">Nov</div>
+              <div class="month active">Dec</div>
+              <div class="month">Jan</div>
+              <div class="month">Feb</div>
+              <div class="month">Mar</div>
+            </div>
+          </div>
+
+          <div class="plan-card">
+            <div class="plan-info">
+              <div class="plan-title">Budget Goal Q1 2025</div>
+              <div class="plan-status">On Track</div>
+            </div>
+
+            <div class="plan-progress">
+              <div class="plan-percentage">68%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Support</a>
+        </div>
+        <p>&copy; 2023 Fincard. All rights reserved.</p>
+      </div>
+    </footer>
+    <script>
+
+          // Select the hamburger, nav menu, and body overlay
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('nav-menu');
+
+  // Add click event listener to toggle classes
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active'); // Toggle the hamburger animation
+    navMenu.classList.toggle('active'); // Toggle the nav menu visibility
+  });
+
+  // Close the menu when clicking outside of it
+  document.addEventListener('click', (event) => {
+    if (!navMenu.contains(event.target) && !hamburger.contains(event.target)) {
+      navMenu.classList.remove('active');
+      hamburger.classList.remove('active');
+    }
+  });
+       
+      </script>
+  </body>
+</html>

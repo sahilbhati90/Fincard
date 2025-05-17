@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+    margin: 0;
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #fff;
+    color: #000;
+  }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 50px;
+    background-color: rgba(15, 65, 167, 0.918);
+    border-bottom: 1px solid #00000000;
+    box-shadow: 0 4px 6px rgba(1, 6, 12, 0.981); /* Add shadow to the navigation bar */
+  }
+  
+  .topbar .logo {
+    height: 60px;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 50px;
+    
+  }
+  
+  
+  /* Navigation bar hover and active styles */
+  nav a {
+    text-decoration: none;
+    color: #0d0d0d;
+    font-weight: bold;
+    transition: color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+  }
+  
+  nav a:hover {
+    color: #1219e875; /* Change color on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+  }
+  
+  nav a:active {
+    color: #0021b3; /* Darker shade for active state */
+    transform: scale(1); /* Reset scale on click */
+  }
+  
+  /* Login button hover and active styles */
+  .btnl {
+    background-color: #000000;
+    color: white;
+    font-weight: bold;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+  }
+  
+  .btnl:hover {
+    background-color: #1e42e5; /* Change background color on hover */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+  }
+  
+  .btnl:active {
+    background-color: #0056b3; /* Darker shade for active state */
+    transform: scale(1); /* Reset scale on click */
+  }
+  .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+  
+  .container {
+  padding: 40px 20px;
+  max-width: 1300px;
+  margin: auto;
+}
+.card {
+  border: 1px solid #eee;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  transition: 0.3s ease;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  }
+  .card:hover {
+  box-shadow: 0 10px 16px rgba(0, 0, 0, 0.1);
+  }
+  .card .card-image {
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  }
+  .card-content {
+  padding: 16px 20px;
+  }
+  .card-title {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  }
+  .card-subtitle {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 16px;
+  }
+  .btn {
+  display: inline-block;
+  background: #000000;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  }
+  .btn:hover {
+    background-color: #1e42e5;
+  color: #fff; /* Ensure text color remains readable */
+  transform: scale(1.1); /* Slightly enlarge the button */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a shadow effect */
+  transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+  .validity {
+  font-size: 0.85rem;
+  color: #666;
+  }
+  .footer {
+    background-color: #000;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    margin-bottom: 20px;
+}
+
+.footer-links a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer p {
+    font-size: 14px;
+    color: #aaa;
+    margin: 0;
+}
+
+
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <img src="Images/Fin_Card-removebg-preview.png" alt="FinCard logo" class="logo"><a href="index.html"></a>
+    <nav>
+      <ul>
+        <li><a href="index.jsp">Home</a></li>
+        <li><a href="aboutus.html">About Us</a></li>
+        <li><a href="offers.html">Offers</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="contactus.html">Contact Us</a></li>
+      </ul>
+    </nav>
+    <a href="login.jsp" class="btnl">Login</a>
+  </header>
+  <div class="container">
+    <div class="grid">
+      <!-- Card 1 -->
+      <div class="card">
+        <img src="Images/one Essential.png" alt="OneEssential">
+        <div class="card-content">
+          <div class="card-title">OneEssential</div>
+          <div class="card-subtitle">Get flat 5% valueback</div>
+          <a href="#" class="btn">Offer Details</a>
+          <div class="validity">Valid till Apr 30 2025</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card">
+        <img src="Images/Dmart.png" alt="DMart">
+        <div class="card-content">
+          <div class="card-title">DMart</div>
+          <div class="card-subtitle">Get flat 5% valueback</div>
+          <a href="#" class="btn">Offer Details</a>
+          <div class="validity">Valid till Apr 30 2025</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card">
+        <img src="Images/Domino.png" alt="Domino's">
+        <div class="card-content">
+          <div class="card-title">Dominos</div>
+          <div class="card-subtitle">Speedy Savings! Get 5% Off, Up to Rs. 50</div>
+          <a href="#" class="btn">Offer Details</a>
+          <div class="validity">Valid till Apr 30 2025</div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card">
+        <img src="Images/Swiggy-logo.png" alt="Swiggy Instamart">
+        <div class="card-content">
+          <div class="card-title">Swiggy Instamart</div>
+          <div class="card-subtitle">Your Daily Essentials, Now with Rs. 100 Off!</div>
+          <a href="#" class="btn">Offer Details</a>
+          <div class="validity">Valid till Apr 30 2025</div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="card">
+        <img src="Images/zomato.png" alt="More">
+        <div class="card-content">
+          <div class="card-title">More</div>
+          <div class="card-subtitle">Get flat 5% valueback</div>
+          <a href="#" class="btn">Offer Details</a>
+          <div class="validity">Valid till Apr 30 2025</div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="card">
+        <img src="Images/Spotify.png" alt="Spotify">
+        <div class="card-content">
+          <div class="card-title">Spotify</div>
+          <div class="card-subtitle">Get flat 5% valueback</div>
+          <a href="#" class="btn">Offer Details</a>
+          <div class="validity">Valid till Apr 30 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+      <p>&copy; 2023 Fincard. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #fff;
+      color: #000;
+    }
+  
+    html {
+      overflow-y: scroll; /* Always show vertical scrollbar */
+    }
+  
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 50px;
+      background-color: rgba(15, 65, 167, 0.918);
+      border-bottom: 1px solid #00000000;
+      box-shadow: 0 4px 6px rgba(1, 6, 12, 0.981); /* Add shadow to the navigation bar */
+    }
+  
+    .topbar .logo {
+      height: 60px;
+    }
+  
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 50px;
+    }
+  
+    nav a {
+      text-decoration: none;
+      color: #0d0d0d;
+      font-weight: bold;
+      transition: color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    }
+  
+    nav a:hover {
+      color: #1219e875; /* Change color on hover */
+      transform: scale(1.1); /* Slightly enlarge on hover */
+    }
+  
+    nav a:active {
+      color: #0021b3; /* Darker shade for active state */
+      transform: scale(1); /* Reset scale on click */
+    }
+  
+    .btn {
+      background-color: #000000;
+      color: white;
+      font-weight: bold;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+    }
+  
+    .btn:hover {
+      background-color: #1e42e5; /* Change background color on hover */
+      transform: scale(1.1); /* Slightly enlarge on hover */
+    }
+  
+    .btn:active {
+      background-color: #0056b3; /* Darker shade for active state */
+      transform: scale(1); /* Reset scale on click */
+    }
+    .faq-section {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    details {
+      margin-bottom: 20px;
+      background-color: #f5f5f5;
+      padding: 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    summary {
+      font-size: 18px;
+      font-weight: bold;
+      list-style: none;
+    }
+    
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    summary::after {
+      content: "⌄";
+      float: right;
+      transform: rotate(0deg);
+      transition: transform 0.3s ease;
+      color: #000000;
+    }
+    
+    details[open] summary::after {
+      transform: rotate(180deg);
+    }
+    
+    details p {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #333;
+    }
+    .footer {
+    background-color: #000;
+    color: #fff;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    margin-bottom: 20px;
+}
+
+.footer-links a {
+    color: #1e88e5;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer p {
+    font-size: 14px;
+    color: #aaa;
+    margin: 0;
+}
+
+    
+    </style>
+</head>
+<body>
+  <header class="topbar">
+    <img src="Images/Fin_Card-removebg-preview.png" alt="FinCard logo" class="logo"><a href="index.html"></a>
+    <nav>
+      <ul>
+        <li><a href="index.jsp">Home</a></li>
+        <li><a href="aboutus.html">About Us</a></li>
+        <li><a href="offers.html">Offers</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="contactus.html">Contact Us</a></li>
+      </ul>
+    </nav>
+    <a href="login.jsp" class="btn">Login</a>
+  </header>
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <details>
+      <summary>How can I apply for One Credit Card?</summary>
+      <p>You can apply directly through our website by clicking on "Apply Now" or via the mobile app available on iOS and Android.</p>
+    </details>
+
+    <details>
+      <summary>Is this a contactless card?</summary>
+      <p>Yes, the One Credit Card is a contactless card enabled with NFC for fast, secure tap payments.</p>
+    </details>
+
+    <details>
+      <summary>What is a virtual credit card?</summary>
+      <p>A virtual credit card is a digital version of your physical card that can be used for online purchases securely.</p>
+    </details>
+
+    <details>
+      <summary>Can I change my email address?</summary>
+      <p>Yes, you can update your email address through the profile section in your OneCard app.</p>
+    </details>
+
+    <details>
+      <summary>What should I do if I’ve lost or misplaced my One Credit Card?</summary>
+      <p>Immediately block your card through the app and request a replacement. You can also contact our customer support for help.</p>
+    </details>
+
+    <details>
+      <summary>My mobile phone and One Credit Card are both lost / stolen.</summary>
+      <p>Please block your card by contacting our support immediately. Visit the official website from another device or call our helpline for assistance.</p>
+    </details>
+  </section>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+      <p>&copy; 2023 Fincard. All rights reserved.</p>
+    </div>
+  </footer>
+
+  
+</body>
+</html>
