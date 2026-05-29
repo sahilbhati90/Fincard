@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="/style.css">
+
+    <title>Fincard - Dashboard</title>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<section id="sidebar">
+    <a href="#" class="brand">
+        <img src="/Images/2.png" alt="Logo" class="logo">
+        <span class="text">Fincard</span>
+    </a>
+    <ul class="side-menu top">
+        <li class="active">
+            <a href="Home.html">
+                <i class='bx bxs-dashboard' ></i>
+                <span class="text">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a href="mybanks.html">
+                <i class='bx bxs-bank' ></i>
+                <span class="text">My Banks</span>
+            </a>
+        </li>
+        <li>
+            <a href="transactions.html">
+                <i class='bx bxs-receipt' ></i>
+                <span class="text">Transactions</span>
+            </a>
+        </li>
+        <li>
+            <a href="transfer.html">
+                <i class='bx bxs-send' ></i>
+                <span class="text">Transfer Funds</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" id="connect-bank-link">
+                <i class='bx bxs-plus-circle'></i>
+                <span class="text">Connect Bank</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="side-menu">
+        <li>
+            <a href="settings.html">
+                <i class='bx bxs-cog' ></i>
+                <span class="text">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="login.html" class="logout">
+                <i class='bx bxs-log-out-circle' ></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</section>
+<!-- SIDEBAR -->
+
+<!-- CONTENT -->
+<section id="content">
+    <!-- NAVBAR -->
+    <nav>
+        <i class='bx bx-menu' ></i>
+
+        <form action="#">
+            <div class="form-input">
+                <input type="search" placeholder="Search...">
+                <button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
+            </div>
+        </form>
+        <input type="checkbox" id="switch-mode" hidden>
+        <label for="switch-mode" class="switch-mode"></label>
+        <a href="#" class="notification">
+            <i class='bx bxs-bell' ></i>
+            <span class="num">8</span>
+        </a>
+        <a href="myprofile.html" class="profile">
+            <img src="/Images/1.png">
+        </a>
+    </nav>
+    <!-- NAVBAR -->
+
+    <!-- MAIN DASHBOARD -->
+    <main class="dashboard">
+
+        <!-- Welcome -->
+        <div class="welcome">
+            <h1>Welcome to <span>Fincard</span></h1>
+            <p>Access & manage your account and transactions efficiently.</p>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="progress-ring">
+                <div class="inner-circle"></div>
+            </div>
+
+            <div class="balance-info">
+                <!-- 🔄 Dynamic Data (will be updated by JavaScript) -->
+                <h3 id="bank-count">
+                    <i class='bx bx-loader-alt bx-spin' style="font-size: 16px;"></i> Loading...
+                </h3>
+                <p>Total Current Balance</p>
+                <h2 id="total-balance">
+                    <i class='bx bx-loader-alt bx-spin'></i>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Transactions -->
+        <div class="transactions-card">
+
+            <div class="transactions-head">
+                <h3>Recent Transactions</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="loadRecentTransactions()" id="refresh-btn" title="Refresh transactions">
+                        <i class='bx bx-refresh'></i> Refresh
+                    </button>
+
+                        <a href="transactions.html"><button>View all</button></a>
+
+                </div>
+            </div>
+
+            <div class="account-strip">
+                <h4>Plaid Checking</h4>
+                <span>$110.00</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Transaction</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Channel</th>
+                        <th>Category</th>
+                    </tr>
+                    </thead>
+                    <tbody id="transactions-tbody">
+                    <!-- 🔄 Transactions will be loaded dynamically -->
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <i class='bx bx-loader-alt bx-spin' style="font-size: 24px;"></i>
+                            <p style="margin-top: 10px;">Loading transactions...</p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </main>
+    <!-- END MAIN DASHBOARD -->
+
+</section>
+<!-- END CONTENT -->
+
+<script src="/script.js"></script>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+    // ============================================
+    // DASHBOARD - DYNAMIC DATA LOADING
+    // ============================================
+
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('🏠 Dashboard - Loading data...');
+        loadDashboardData();
+        loadRecentTransactions(); // 🆕 Load transactions
+    });
+
+    // 📊 Load Dashboard Summary from API
+    async function loadDashboardData() {
+        try {
+            console.log('📡 Fetching dashboard summary...');
+
+            const response = await fetch('/api/dashboard/summary');
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.warn('⚠️ User not authenticated - redirecting to login');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                throw new Error('Failed to fetch dashboard data');
+            }
+
+            const data = await response.json();
+            console.log('✅ Dashboard data received:', data);
+
+            // Update UI with real data
+            updateDashboardUI(data);
+
+        } catch (error) {
+            console.error('❌ Error loading dashboard:', error);
+
+            // Show error state
+            document.getElementById('bank-count').innerHTML =
+                '<i class="bx bx-error-circle"></i> Error loading data';
+            document.getElementById('total-balance').innerHTML =
+                '<i class="bx bx-error-circle"></i>';
+        }
+    }
+
+    function updateDashboardUI(data) {
+        // Update bank count
+        const bankCountText = data.totalBanks === 1
+            ? '1 Bank Account'
+            : `${data.totalBanks} Bank Accounts`;
+        document.getElementById('bank-count').textContent = bankCountText;
+
+        // Update total balance
+        document.getElementById('total-balance').textContent = '$' + data.totalBalanceFormatted;
+
+        // 🆕 Show empty state if no banks
+        if (data.totalBanks === 0) {
+            showNoBanksState();
+        }
+
+        console.log('✅ UI updated:');
+        console.log('   Banks:', data.totalBanks);
+        console.log('   Balance: $' + data.totalBalanceFormatted);
+    }
+
+    // 🏦 Show "No Banks" empty state
+    function showNoBanksState() {
+        const tbody = document.getElementById('transactions-tbody');
+        tbody.innerHTML = `
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 50px;">
+                <i class='bx bxs-bank' style="font-size: 64px; opacity: 0.2; color: var(--blue);"></i>
+                <h3 style="margin-top: 15px; color: var(--dark);">No Banks Connected</h3>
+                <p style="color: #888; margin-top: 8px;">Connect your first bank account to start tracking transactions</p>
+                <button onclick="document.getElementById('connect-bank-link').click()"
+                        style="margin-top: 20px; padding: 10px 24px; background: var(--blue);
+                               color: white; border: none; border-radius: 8px; cursor: pointer;
+                               font-size: 14px; font-weight: 500;">
+                    <i class='bx bxs-plus-circle'></i> Connect Bank
+                </button>
+            </td>
+        </tr>
+    `;
+    }
+
+    // ============================================
+    // RECENT TRANSACTIONS - DYNAMIC DATA LOADING
+    // ============================================
+
+    // 💳 Load Recent Transactions from API
+    async function loadRecentTransactions() {
+        // Show loading state on refresh button
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Loading...';
+            refreshBtn.disabled = true;
+        }
+
+        try {
+            console.log('💳 Fetching recent transactions...');
+
+            const response = await fetch('/api/transactions/recent?limit=10');
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.warn('⚠️ User not authenticated');
+                    return;
+                }
+                throw new Error('Failed to fetch transactions');
+            }
+
+            const transactions = await response.json();
+            console.log('✅ Transactions received:', transactions.length);
+
+            // Update UI with real transactions
+            updateTransactionsUI(transactions);
+
+        } catch (error) {
+            console.error('❌ Error loading transactions:', error);
+            showTransactionsError();
+        } finally {
+            // Reset refresh button
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '<i class="bx bx-refresh"></i> Refresh';
+                refreshBtn.disabled = false;
+            }
+        }
+    }
+
+    // 🎨 Update Transactions Table with fetched data
+    function updateTransactionsUI(transactions) {
+        const tbody = document.getElementById('transactions-tbody');
+
+        // If no transactions
+        if (transactions.length === 0) {
+            tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #888;">
+                    <i class='bx bx-receipt' style="font-size: 48px; opacity: 0.3;"></i>
+                    <p style="margin-top: 10px;">No transactions yet</p>
+                    <p style="font-size: 14px;">Connect a bank to see your transactions</p>
+                </td>
+            </tr>
+        `;
+            return;
+        }
+
+        // Build table rows
+        tbody.innerHTML = '';
+        transactions.forEach(txn => {
+            const row = document.createElement('tr');
+
+            // Amount formatting (credit/debit)
+            const isDebit = txn.amount < 0;
+            const amountClass = isDebit ? 'debit' : 'credit';
+            const amountText = isDebit
+                ? `-$${Math.abs(txn.amount).toFixed(2)}`
+                : `$${txn.amount.toFixed(2)}`;
+
+            // Status
+            const status = txn.pending ? 'pending' : 'success';
+            const statusText = txn.pending ? 'Pending' : 'Success';
+
+            // Category tag
+            const categoryClass = getCategoryClass(txn.category);
+
+            // Format date
+            const formattedDate = formatTransactionDate(txn.date);
+
+            row.innerHTML = `
+            <td>${txn.name}</td>
+            <td class="${amountClass}">${amountText}</td>
+            <td><span class="status ${status}">${statusText}</span></td>
+            <td>${formattedDate}</td>
+            <td>${txn.channel}</td>
+            <td><span class="tag ${categoryClass}">${txn.category}</span></td>
+        `;
+
+            tbody.appendChild(row);
+        });
+
+        console.log('✅ Transactions UI updated');
+    }
+
+    // 🏷️ Map category to CSS class
+    function getCategoryClass(category) {
+        const lowerCategory = category.toLowerCase();
+
+        if (lowerCategory.includes('food') || lowerCategory.includes('drink') ||
+            lowerCategory.includes('restaurant')) {
+            return 'food';
+        }
+        if (lowerCategory.includes('travel') || lowerCategory.includes('transport') ||
+            lowerCategory.includes('uber') || lowerCategory.includes('airline')) {
+            return 'travel';
+        }
+        if (lowerCategory.includes('shop') || lowerCategory.includes('retail')) {
+            return 'shopping';
+        }
+        if (lowerCategory.includes('entertainment') || lowerCategory.includes('recreation')) {
+            return 'entertainment';
+        }
+
+        return 'other';
+    }
+
+    // 📅 Format transaction date
+    function formatTransactionDate(dateString) {
+        const date = new Date(dateString);
+        const options = {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        };
+        return date.toLocaleDateString('en-US', options);
+    }
+
+    // ❌ Show error state for transactions
+    function showTransactionsError() {
+        const tbody = document.getElementById('transactions-tbody');
+        tbody.innerHTML = `
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: #e74c3c;">
+                <i class='bx bx-error-circle' style="font-size: 48px;"></i>
+                <p style="margin-top: 10px;">Failed to load transactions</p>
+                <button onclick="loadRecentTransactions()"
+                        style="margin-top: 10px; padding: 8px 20px; cursor: pointer;">
+                    Try Again
+                </button>
+            </td>
+        </tr>
+    `;
+    }
+
+
+    // ============================================
+    // CONNECT BANK FUNCTIONALITY
+    // ============================================
+
+    document.getElementById("connect-bank-link").addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        try {
+            console.log("🔗 Connect Bank clicked");
+
+            // 1️⃣ Get link token from backend
+            const res = await fetch("/api/plaid/create-link-token", {
+                method: "POST"
+            });
+            const data = await res.json();
+
+            // 2️⃣ Open Plaid popup
+            const handler = Plaid.create({
+                token: data.link_token,
+
+                onSuccess: async function (public_token) {
+                    console.log("✅ PUBLIC TOKEN:", public_token);
+
+                    // 3️⃣ Exchange token
+                    const exchangeRes = await fetch("/api/plaid/exchange-public-token", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ public_token })
+                    });
+
+                    if (exchangeRes.ok) {
+                        const result = await exchangeRes.json();
+                        console.log("✅ Bank connected:", result.institution_name);
+
+                        // 4️⃣ Update UI - show success message
+                        document.querySelector("#connect-bank-link .text").innerText = "Bank Connected ✅";
+
+                        // 5️⃣ Reload dashboard data (without page refresh)
+                        // 5️⃣ Reload dashboard data (without page refresh)
+                        console.log("🔄 Reloading dashboard data...");
+                        setTimeout(() => {
+                            loadDashboardData();
+                            loadRecentTransactions(); // 🆕 Also reload transactions
+                        }, 1000);
+                    }
+                },
+
+                onExit: function (err) {
+                    if (err) {
+                        console.error("❌ Plaid error:", err);
+                    } else {
+                        console.log("🚪 User exited Plaid");
+                    }
+                }
+            });
+
+            handler.open();
+
+        } catch (err) {
+            console.error("❌ Connect Bank error:", err);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <title>My Banks - Fincard</title>
+</head>
+<body>
+
+
+<!-- SIDEBAR -->
+<section id="sidebar">
+    <a href="#" class="brand">
+        <img src="Images/2.png" alt="Logo" class="logo">
+        <span class="text">Fincard</span>
+    </a>
+    <ul class="side-menu top">
+        <li>
+            <a href="Home.html">
+                <i class='bx bxs-dashboard' ></i>
+                <span class="text">Dashboard</span>
+            </a>
+        </li>
+        <li class="active">
+            <a href="mybanks.html">
+                <i class='bx bxs-bank' ></i>
+                <span class="text">My Banks</span>
+            </a>
+        </li>
+        <li>
+            <a href="transactions.html">
+                <i class='bx bxs-receipt' ></i>
+                <span class="text">Transactions</span>
+            </a>
+        </li>
+        <li>
+            <a href="transfer.html">
+                <i class='bx bxs-send' ></i>
+                <span class="text">Transfer Funds</span>
+            </a>
+        </li>
+        <li>
+            <a href="#" id="connect-bank-sidebar">
+                <i class='bx bxs-plus-circle' ></i>
+                <span class="text">Connect Bank</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="side-menu">
+        <li>
+            <a href="settings.html">
+                <i class='bx bxs-cog' ></i>
+                <span class="text">Settings</span>
+            </a>
+        </li>
+        <li>
+            <a href="login.html" class="logout">
+                <i class='bx bxs-log-out-circle' ></i>
+                <span class="text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</section>
+<!-- SIDEBAR -->
+
+<section id="content">
+    <!-- NAVBAR -->
+    <nav>
+        <i class='bx bx-menu' ></i>
+
+        <form action="#">
+            <div class="form-input">
+                <input type="search" placeholder="Search...">
+                <button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
+            </div>
+        </form>
+        <input type="checkbox" id="switch-mode" hidden>
+        <label for="switch-mode" class="switch-mode"></label>
+        <a href="#" class="notification">
+            <i class='bx bxs-bell' ></i>
+            <span class="num">8</span>
+        </a>
+        <a href="#" class="profile">
+            <img src="Images/1.png">
+        </a>
+    </nav>
+    <!-- NAVBAR -->
+
+    <!-- MAIN CONTENT -->
+    <main class="mybanks-page">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>My Bank Accounts</h1>
+            <p>Effortlessly Manage Your Banking Activities</p>
+        </div>
+
+        <!-- Your Cards Section -->
+        <div class="cards-section">
+            <h2 class="section-title">Your cards</h2>
+
+            <div class="bank-cards-grid" id="bank-cards-container">
+
+                <!-- 🔄 Loading State -->
+                <div id="loading-state" class="loading-message">
+                    <i class='bx bx-loader-alt bx-spin' style="font-size: 48px; color: #2563eb;"></i>
+                    <p style="margin-top: 16px; color: #64748b; font-size: 16px;">Loading your banks...</p>
+                </div>
+
+                <!-- 🏦 Empty State (agar koi bank nahi hai) -->
+                <div id="empty-state" class="empty-message" style="display:none;">
+                    <i class='bx bx-bank' style="font-size: 64px; color: #cbd5e1;"></i>
+                    <h3 style="margin-top: 16px; color: #334155; font-size: 22px;">No Banks Connected</h3>
+                    <p style="color: #64748b; margin: 8px 0 24px; font-size: 15px;">Connect your first bank account to get started</p>
+                    <button id="connect-first-bank" class="btn-primary">
+                        <i class='bx bx-plus'></i> Connect Bank
+                    </button>
+                </div>
+
+                <!-- ❌ Error State -->
+                <div id="error-state" class="empty-message" style="display:none;">
+                    <i class='bx bx-error-circle' style="font-size: 64px; color: #ef4444;"></i>
+                    <h3 style="margin-top: 16px; color: #334155; font-size: 22px;">Failed to Load Banks</h3>
+                    <p style="color: #64748b; margin: 8px 0 24px; font-size: 15px;">Something went wrong. Please try again.</p>
+                    <button onclick="location.reload()" class="btn-primary">
+                        <i class='bx bx-refresh'></i> Retry
+                    </button>
+                </div>
+
+                <!-- ✅ Cards will be inserted here dynamically by JavaScript -->
+
+            </div>
+        </div>
+
+    </main>
+    <!-- END MAIN CONTENT -->
+
+</section>
+<!-- END CONTENT -->
+
+<!-- Loading Overlay (for connecting bank) -->
+<div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; display: none;">
+    <div style="text-align: center; padding: 40px; background: white; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+        <i class='bx bx-loader-alt bx-spin' style="font-size: 48px; color: #2563eb;"></i>
+        <p style="margin-top: 16px; color: #64748b; font-size: 16px;">Connecting your bank...</p>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" style="display: none; position: fixed; bottom: 24px; right: 24px; background: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 9999; display: flex; align-items: center; gap: 12px;">
+    <i class='bx bx-check-circle' style="font-size: 24px; color: #10b981;"></i>
+    <span id="toast-message" style="color: #1e293b; font-weight: 500;"></span>
+</div>
+
+<script src="script.js"></script>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script>
+    // ============================================
+    // MYBANKS PAGE - FINAL VERSION WITH REAL API
+    // ============================================
+
+    // 🎨 Color gradients for different banks
+    const BANK_COLORS = [
+        "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)", // Blue
+        "linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)", // Purple
+        "linear-gradient(135deg, #0f766e 0%, #0d9488 100%)", // Teal
+        "linear-gradient(135deg, #dc2626 0%, #991b1b 100%)", // Red
+        "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)", // Orange
+        "linear-gradient(135deg, #16a34a 0%, #15803d 100%)", // Green
+    ];
+
+    // 🚀 Load banks when page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('🏦 MyBanks Page - Loading banks from API...');
+
+        // 🔥 REAL API CALL (No more mock data!)
+        loadUserBanksFromAPI();
+
+        // Connect bank button handlers
+        const connectFirstBtn = document.getElementById('connect-first-bank');
+        const connectSidebarBtn = document.getElementById('connect-bank-sidebar');
+
+        if (connectFirstBtn) {
+            connectFirstBtn.addEventListener('click', openPlaidLink);
+        }
+
+        if (connectSidebarBtn) {
+            connectSidebarBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                openPlaidLink();
+            });
+        }
+    });
+
+    // 📡 REAL API CALL - Fetch user banks from backend
+    async function loadUserBanksFromAPI() {
+        const loadingState = document.getElementById('loading-state');
+        const errorState = document.getElementById('error-state');
+        const emptyState = document.getElementById('empty-state');
+        const container = document.getElementById('bank-cards-container');
+
+        try {
+            console.log('📡 Calling /api/plaid/user-banks...');
+
+            const response = await fetch('/api/plaid/user-banks');
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // User not authenticated - redirect to login
+                    console.warn('⚠️ User not authenticated - redirecting to login');
+                    window.location.href = '/login.html';
+                    return;
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const banks = await response.json();
+            console.log('✅ Received banks from API:', banks);
+
+            // Hide loading
+            loadingState.style.display = 'none';
+
+            if (!banks || banks.length === 0) {
+                // Show empty state
+                emptyState.style.display = 'block';
+                console.log('📭 No banks connected');
+                return;
+            }
+
+            // Hide empty state
+            emptyState.style.display = 'none';
+
+            // Map backend response to frontend format and render
+            const mappedBanks = banks.map((bank, index) => ({
+                accountName: bank.accountName || 'Unknown Account',
+                balance: bank.balance || '0.00',
+                mask: bank.mask || '0000',
+                accountId: bank.accountId || '',
+                institutionName: bank.institutionName || 'Unknown Bank',
+                color: BANK_COLORS[index % BANK_COLORS.length]
+            }));
+
+            // Render cards
+            mappedBanks.forEach(bank => {
+                const cardHTML = createBankCardHTML(bank);
+                container.insertAdjacentHTML('beforeend', cardHTML);
+            });
+
+            // Attach copy button listeners
+            attachCopyListeners();
+
+            console.log(`✅ Loaded ${mappedBanks.length} bank(s)`);
+
+        } catch (error) {
+            console.error('❌ Failed to load banks:', error);
+
+            // Hide loading, show error
+            loadingState.style.display = 'none';
+            errorState.style.display = 'block';
+        }
+    }
+
+    // 🎨 Create bank card HTML
+    function createBankCardHTML(bank) {
+        const cardColor = bank.color || "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)";
+
+        return `
+        <div class="bank-card">
+            <div class="card-inner" style="background: ${cardColor};">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="card-info">
+                        <h3 class="card-name">${bank.accountName}</h3>
+                        <p class="card-balance">$${bank.balance}</p>
+                    </div>
+                    <div class="contactless-icon">
+                        <i class='bx bx-wifi'></i>
+                    </div>
+                </div>
+
+                <!-- Card Number -->
+                <div class="card-number">
+                    <span class="dots">•••• •••• ••••</span>
+                    <span class="last-digits">${bank.mask}</span>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="card-footer">
+                    <div class="chip-icon">
+                        <i class='bx bx-chip'></i>
+                    </div>
+                    <div class="card-logo">
+                        <div class="mastercard-logo">
+                            <div class="circle circle-red"></div>
+                            <div class="circle circle-orange"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account ID -->
+            <div class="account-id">
+                <span class="id-text">${bank.accountId}</span>
+                <button class="copy-btn" title="Copy Account ID">
+                    <i class='bx bx-copy'></i>
+                </button>
+            </div>
+        </div>
+    `;
+    }
+
+    // 📋 Copy button functionality
+    function attachCopyListeners() {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const accountId = this.previousElementSibling.textContent;
+
+                navigator.clipboard.writeText(accountId).then(() => {
+                    // Visual feedback
+                    const originalIcon = this.innerHTML;
+                    const originalBg = this.style.background;
+                    const originalColor = this.style.color;
+
+                    this.innerHTML = '<i class="bx bx-check"></i>';
+                    this.style.background = '#10b981';
+                    this.style.color = 'white';
+
+                    setTimeout(() => {
+                        this.innerHTML = originalIcon;
+                        this.style.background = originalBg;
+                        this.style.color = originalColor;
+                    }, 2000);
+
+                    console.log('📋 Copied:', accountId);
+                }).catch(err => {
+                    console.error('❌ Copy failed:', err);
+                    alert('Failed to copy. Please try again.');
+                });
+            });
+        });
+    }
+
+    // 🏦 Open Plaid Link (Connect Bank)
+    async function openPlaidLink() {
+        console.log('🔗 Opening Plaid Link...');
+
+        try {
+            // 1️⃣ Backend se link_token lena
+            console.log('📡 Fetching link token...');
+            const res = await fetch("/api/plaid/create-link-token", {
+                method: "POST"
+            });
+
+            if (!res.ok) {
+                throw new Error('Failed to create link token');
+            }
+
+            const data = await res.json();
+            console.log('✅ Link token received');
+
+            // 2️⃣ Plaid popup open karna
+            const handler = Plaid.create({
+                token: data.link_token,
+
+                onSuccess: async function (public_token) {
+                    console.log("✅ PUBLIC TOKEN received:", public_token.substring(0, 20) + "...");
+
+                    // Show loading overlay
+                    showLoadingOverlay();
+
+                    try {
+                        // 3️⃣ Public token backend ko bhejna
+                        console.log('📡 Exchanging public token...');
+                        const exchangeRes = await fetch("/api/plaid/exchange-public-token", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ public_token })
+                        });
+
+                        console.log('📡 Exchange response status:', exchangeRes.status);
+
+                        if (exchangeRes.ok) {
+                            const result = await exchangeRes.json();
+                            console.log("✅ Token exchanged successfully");
+                            console.log("Institution:", result.institution_name);
+                            console.log("Item ID:", result.item_id);
+
+                            // 🔥 CRITICAL: Hide loading BEFORE showing toast
+                            hideLoadingOverlay();
+                            console.log('✅ Loading overlay should be hidden now');
+
+                            // Show success toast
+                            showToast('✅ ' + result.institution_name + ' connected successfully!');
+
+                            // 4️⃣ Page reload after 1.5 seconds
+                            console.log('⏳ Reloading page in 1.5 seconds...');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1500);
+
+                        } else {
+                            // Error case
+                            const error = await exchangeRes.json();
+                            console.error('❌ Exchange failed:', error);
+
+                            hideLoadingOverlay();
+                            alert('❌ Failed to connect: ' + (error.error || 'Unknown error'));
+                        }
+                    } catch (err) {
+                        console.error('❌ Exchange error:', err);
+                        hideLoadingOverlay();
+                        alert('❌ ' + err.message);
+                    }
+                },
+
+                onExit: function (err, metadata) {
+                    console.log('🚪 Plaid exited');
+
+                    // Make sure overlay is hidden when user exits
+                    hideLoadingOverlay();
+
+                    if (err) {
+                        console.error('❌ Plaid error:', err);
+
+                        // User-friendly error messages
+                        if (err.error_code === 'INVALID_CREDENTIALS') {
+                            alert('❌ Invalid bank credentials. Please check and try again.');
+                        } else if (err.error_code === 'INSTITUTION_DOWN') {
+                            alert('⚠️ Bank is temporarily unavailable. Please try later.');
+                        } else if (err.error_code === 'ITEM_LOCKED') {
+                            alert('🔒 Your bank account is locked. Please contact your bank.');
+                        } else if (err.display_message) {
+                            alert('❌ ' + err.display_message);
+                        }
+                    }
+
+                    console.log('Metadata:', metadata);
+                }
+            });
+
+            handler.open();
+
+        } catch (err) {
+            console.error("❌ Connect Bank error:", err);
+            hideLoadingOverlay();  // Hide overlay on error
+            alert('❌ Failed to open Plaid Link. Please check your connection and try again.');
+        }
+    }
+
+    // 🔄 Show Loading Overlay - FIXED
+    function showLoadingOverlay() {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+            overlay.style.visibility = 'visible';
+            document.body.style.overflow = 'hidden';  // Prevent scrolling
+            console.log('🔄 Loading overlay SHOWN');
+        } else {
+            console.error('❌ Loading overlay element not found!');
+        }
+    }
+
+    // ❌ Hide Loading Overlay - FIXED
+    function hideLoadingOverlay() {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+            overlay.style.visibility = 'hidden';
+            document.body.style.overflow = '';  // Restore scrolling
+            console.log('✅ Loading overlay HIDDEN');
+        } else {
+            console.error('❌ Loading overlay element not found!');
+        }
+    }
+
+    // 🎉 Show Toast Notification
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+
+        if (toast && toastMessage) {
+            toastMessage.textContent = message;
+            toast.style.display = 'flex';
+
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+    }
+</script>
+</body>
+</html>
