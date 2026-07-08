@@ -1,0 +1,119 @@
+@use '../../../theme/mixins' as *;
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+
+  &__welcome {
+    h1 {
+      font-size: 24px;
+      span { color: var(--primary); }
+    }
+    p {
+      color: var(--text-secondary);
+      margin-top: var(--space-1);
+    }
+  }
+}
+
+.balance-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+
+  &__ring {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) 270deg, var(--surface-sunken) 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__ring-inner {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--surface);
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+
+    h3 { font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+    p { font-size: 13px; color: var(--muted); }
+    h2 { font-size: 32px; margin: var(--space-1) 0; }
+  }
+}
+
+.transactions-card {
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-2) var(--space-4);
+
+    h3 { font-size: 16px; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-2);
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  @include scrollbar-thin;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    padding: var(--space-3) var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: var(--space-3);
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  td.is-credit { color: var(--success); font-weight: 600; }
+}
+
+@include respond(md) {
+  .balance-card {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .transactions-card__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+}

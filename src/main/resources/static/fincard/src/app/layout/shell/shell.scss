@@ -1,0 +1,32 @@
+@use '../../../theme/mixins' as *;
+:host {
+  display: contents;
+}
+
+.shell {
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--duration-base) var(--ease-standard);
+
+  &--collapsed {
+    margin-left: var(--sidebar-width-collapsed);
+  }
+
+  &__content {
+    flex: 1;
+    padding: var(--space-6);
+    max-width: var(--content-max-width);
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@include respond(md) {
+  .shell {
+    margin-left: 0;
+    &--collapsed { margin-left: 0; }
+    &__content { padding: var(--space-4); }
+  }
+}

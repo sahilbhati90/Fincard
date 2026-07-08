@@ -177,7 +177,8 @@ public class PlaidController {
                         // Map each account
                         for (AccountBase account : accounts) {
                             Map<String, Object> bankData = new HashMap<>();
-                            bankData.put("accountId", bank.getItemId());
+                            bankData.put("accountId", account.getAccountId());
+                            bankData.put("itemId", bank.getItemId());
                             bankData.put("accountName", account.getName());
                             bankData.put("institutionName", bank.getInstitutionName());
                             bankData.put("mask", account.getMask());

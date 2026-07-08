@@ -1,0 +1,54 @@
+@mixin focus-ring {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@mixin card-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard);
+}
+
+@mixin card-hover {
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin scrollbar-thin {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: var(--radius-full);
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@mixin respond($bp) {
+  @if $bp == xs {
+    @media (max-width: 375px) { @content; }
+  } @else if $bp == sm {
+    @media (max-width: 576px) { @content; }
+  } @else if $bp == md {
+    @media (max-width: 768px) { @content; }
+  } @else if $bp == lg {
+    @media (max-width: 1024px) { @content; }
+  } @else if $bp == xl {
+    @media (max-width: 1440px) { @content; }
+  }
+}

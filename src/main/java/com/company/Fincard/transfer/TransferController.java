@@ -12,9 +12,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controller for Transfer operations
- */
 @RestController
 @RequestMapping("/api/transfers")
 @AllArgsConstructor
@@ -22,35 +19,21 @@ public class TransferController {
 
     private final TransferService transferService;
 
-    /**
-     * Create a new transfer
-     *
-     * POST /api/transfers/create
-     * Body: {
-     *   "senderAccountId": "item-xxx",
-     *   "recipientAccountId": "account-yyy",
-     *   "recipientEmail": "recipient@example.com",
-     *   "amount": 100.50,
-     *   "note": "Payment for dinner"
-     * }
-     */
     @PostMapping("/create")
     public ResponseEntity<?> createTransfer(@RequestBody Map<String, Object> request) {
         try {
-            // Get authenticated user
             AppUser user = getAuthenticatedUser();
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("error", "User not authenticated"));
             }
 
-            // Extract request data
+            String senderItemId = (String) request.get("senderItemId");
             String senderAccountId = (String) request.get("senderAccountId");
             String recipientAccountId = (String) request.get("recipientAccountId");
             String recipientEmail = (String) request.get("recipientEmail");
             String note = (String) request.get("note");
 
-            // Parse amount
             BigDecimal amount;
             try {
                 Object amountObj = request.get("amount");
@@ -66,7 +49,11 @@ public class TransferController {
                         .body(Map.of("error", "Invalid amount: " + e.getMessage()));
             }
 
-            // Validate inputs
+            if (senderItemId == null || senderItemId.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Source bank is required"));
+            }
+
             if (senderAccountId == null || senderAccountId.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Source account is required"));
@@ -77,14 +64,15 @@ public class TransferController {
                         .body(Map.of("error", "Recipient account ID is required"));
             }
 
-            System.out.println("💸 Creating transfer:");
-            System.out.println("   From: " + senderAccountId);
+            System.out.println("Creating transfer:");
+            System.out.println("   From item: " + senderItemId);
+            System.out.println("   From account: " + senderAccountId);
             System.out.println("   To: " + recipientAccountId);
             System.out.println("   Amount: $" + amount);
 
-            // Create transfer
             Transfer transfer = transferService.createTransfer(
                     user,
+                    senderItemId,
                     senderAccountId,
                     recipientAccountId,
                     recipientEmail,
@@ -92,11 +80,10 @@ public class TransferController {
                     note
             );
 
-            System.out.println("✅ Transfer created successfully:");
+            System.out.println("Transfer created successfully:");
             System.out.println("   ID: " + transfer.getId());
             System.out.println("   Status: " + transfer.getStatus());
 
-            // Return success response
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "message", "Transfer completed successfully",
@@ -106,23 +93,18 @@ public class TransferController {
             ));
 
         } catch (IllegalArgumentException e) {
-            System.err.println("❌ Validation error: " + e.getMessage());
+            System.err.println("Validation error: " + e.getMessage());
             return ResponseEntity.badRequest()
                     .body(Map.of("error", e.getMessage()));
 
         } catch (Exception e) {
-            System.err.println("❌ Transfer error: " + e.getMessage());
+            System.err.println("Transfer error: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Failed to process transfer: " + e.getMessage()));
         }
     }
 
-    /**
-     * Get user's transfer history
-     *
-     * GET /api/transfers/history
-     */
     @GetMapping("/history")
     public ResponseEntity<?> getTransferHistory() {
         try {
@@ -133,24 +115,18 @@ public class TransferController {
             }
 
             List<Transfer> transfers = transferService.getUserTransfers(user);
-
-            System.out.println("✅ Retrieved " + transfers.size() + " transfers for user: " + user.getEmail());
+            System.out.println("Retrieved " + transfers.size() + " transfers for user: " + user.getEmail());
 
             return ResponseEntity.ok(transfers);
 
         } catch (Exception e) {
-            System.err.println("❌ Error fetching transfer history: " + e.getMessage());
+            System.err.println("Error fetching transfer history: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Failed to fetch transfer history"));
         }
     }
 
-    /**
-     * Get transfer by ID
-     *
-     * GET /api/transfers/{id}
-     */
     @GetMapping("/{id}")
     public ResponseEntity<?> getTransfer(@PathVariable Long id) {
         try {
@@ -162,7 +138,6 @@ public class TransferController {
 
             return transferService.getTransferById(id)
                     .map(transfer -> {
-                        // Verify user owns this transfer
                         if (!transfer.getSenderUser().getId().equals(user.getId())) {
                             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                                     .body(Map.of("error", "Access denied"));
@@ -172,15 +147,12 @@ public class TransferController {
                     .orElse(ResponseEntity.notFound().build());
 
         } catch (Exception e) {
-            System.err.println("❌ Error fetching transfer: " + e.getMessage());
+            System.err.println("Error fetching transfer: " + e.getMessage());
             return ResponseEntity.internalServerError()
                     .body(Map.of("error", "Failed to fetch transfer"));
         }
     }
 
-    /**
-     * Get authenticated user from Spring Security context
-     */
     private AppUser getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

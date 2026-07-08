@@ -3,9 +3,14 @@ package com.company.Fincard.transfer;
 import com.company.Fincard.appuser.AppUser;
 import com.company.Fincard.bank.UserBank;
 import com.company.Fincard.bank.UserBankService;
+import com.plaid.client.model.AccountBase;
+import com.plaid.client.model.AccountsGetRequest;
+import com.plaid.client.model.AccountsGetResponse;
+import com.plaid.client.request.PlaidApi;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import retrofit2.Response;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,29 +22,34 @@ public class TransferService {
 
     private final TransferRepository transferRepository;
     private final UserBankService userBankService;
+    private final PlaidApi plaidApi;
 
-    /**
-     * Create a new transfer
-     * @param senderUser User initiating the transfer
-     * @param senderAccountId Sender's account/bank ID
-     * @param recipientAccountId Recipient's account ID
-     * @param recipientEmail Recipient's email (optional)
-     * @param amount Transfer amount
-     * @param note Transfer note (optional)
-     * @return Created transfer
-     */
     @Transactional
-    public Transfer createTransfer(AppUser senderUser, String senderAccountId,
+    public Transfer createTransfer(AppUser senderUser, String senderItemId, String senderAccountId,
                                    String recipientAccountId, String recipientEmail,
                                    BigDecimal amount, String note) {
 
-        // 1️⃣ Validate amount
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Transfer amount must be greater than zero");
         }
 
-        // 2️⃣ Verify sender owns the source account
-        Optional<UserBank> senderBank = userBankService.findByItemId(senderAccountId);
+        if (senderItemId == null || senderItemId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Source bank is required");
+        }
+
+        if (senderAccountId == null || senderAccountId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Source account is required");
+        }
+
+        if (recipientAccountId == null || recipientAccountId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Recipient account ID is required");
+        }
+
+        if (senderAccountId.equals(recipientAccountId)) {
+            throw new IllegalArgumentException("Source and destination accounts must be different");
+        }
+
+        Optional<UserBank> senderBank = userBankService.findByItemId(senderItemId);
         if (senderBank.isEmpty()) {
             throw new IllegalArgumentException("Source account not found");
         }
@@ -48,12 +58,8 @@ public class TransferService {
             throw new IllegalArgumentException("You don't own this account");
         }
 
-        // 3️⃣ Validate recipient account exists
-        if (recipientAccountId == null || recipientAccountId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Recipient account ID is required");
-        }
+        validateSenderAccountAndBalance(senderBank.get(), senderAccountId, amount);
 
-        // 4️⃣ Create transfer
         Transfer transfer = new Transfer(
                 senderUser,
                 senderAccountId,
@@ -63,58 +69,28 @@ public class TransferService {
                 note
         );
 
-        // 5️⃣ In a real app, you would:
-        // - Check account balance
-        // - Initiate actual bank transfer via Plaid
-        // - Update status based on result
-
-        // For demo: Mark as COMPLETED immediately
+        // Demo mode: persist a completed transfer after validating ownership and balance.
         transfer.setStatus(TransferStatus.COMPLETED);
 
         return transferRepository.save(transfer);
     }
 
-    /**
-     * Get all transfers for a user (sent)
-     * @param user The user
-     * @return List of transfers
-     */
     public List<Transfer> getUserTransfers(AppUser user) {
         return transferRepository.findBySenderUserOrderByCreatedAtDesc(user);
     }
 
-    /**
-     * Get transfer by ID
-     * @param id Transfer ID
-     * @return Transfer if found
-     */
     public Optional<Transfer> getTransferById(Long id) {
         return transferRepository.findById(id);
     }
 
-    /**
-     * Get transfers by status
-     * @param status Transfer status
-     * @return List of transfers
-     */
     public List<Transfer> getTransfersByStatus(TransferStatus status) {
         return transferRepository.findByStatusOrderByCreatedAtDesc(status);
     }
 
-    /**
-     * Get total transfer count for user
-     * @param user The user
-     * @return Count
-     */
     public long getUserTransferCount(AppUser user) {
         return transferRepository.countBySenderUser(user);
     }
 
-    /**
-     * Update transfer status
-     * @param transferId Transfer ID
-     * @param status New status
-     */
     @Transactional
     public void updateTransferStatus(Long transferId, TransferStatus status) {
         Optional<Transfer> transferOpt = transferRepository.findById(transferId);
@@ -122,6 +98,39 @@ public class TransferService {
             Transfer transfer = transferOpt.get();
             transfer.setStatus(status);
             transferRepository.save(transfer);
+        }
+    }
+
+    private void validateSenderAccountAndBalance(UserBank senderBank, String senderAccountId, BigDecimal amount) {
+        try {
+            AccountsGetRequest request = new AccountsGetRequest()
+                    .accessToken(senderBank.getAccessToken());
+
+            Response<AccountsGetResponse> response = plaidApi.accountsGet(request).execute();
+            if (!response.isSuccessful() || response.body() == null) {
+                throw new IllegalArgumentException("Could not verify source account");
+            }
+
+            AccountBase sourceAccount = response.body().getAccounts().stream()
+                    .filter(account -> senderAccountId.equals(account.getAccountId()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Source account not found"));
+
+            Double currentBalance = sourceAccount.getBalances() != null
+                    ? sourceAccount.getBalances().getCurrent()
+                    : null;
+
+            if (currentBalance == null) {
+                throw new IllegalArgumentException("Could not verify source account balance");
+            }
+
+            if (BigDecimal.valueOf(currentBalance).compareTo(amount) < 0) {
+                throw new IllegalArgumentException("Insufficient balance in source account");
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not verify source account");
         }
     }
 }

@@ -1,0 +1,111 @@
+<div class="page animate-in">
+  <header class="page__header">
+    <div>
+      <h1>Transactions</h1>
+      <p>A full history of activity across all connected accounts.</p>
+    </div>
+    <app-button variant="secondary" (click)="refreshTransactions()" [loading]="loading()">
+      <i class="bx bx-refresh" aria-hidden="true"></i> Refresh
+    </app-button>
+  </header>
+
+  <app-card [padding]="'sm'">
+    <div class="summary-strip" aria-label="Transaction summary">
+      <div>
+        <span>Showing</span>
+        <strong>{{ filteredTransactions().length }}</strong>
+      </div>
+      <div>
+        <span>Money in</span>
+        <strong class="is-credit">+{{ totalInflow() | currency }}</strong>
+      </div>
+      <div>
+        <span>Money out</span>
+        <strong>-{{ totalOutflow() | currency }}</strong>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filters__search">
+        <i class="bx bx-search" aria-hidden="true"></i>
+        <input
+          type="search"
+          placeholder="Search merchant, bank, account..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          aria-label="Search transactions"
+        />
+      </div>
+      <div class="filters__chips" role="tablist" aria-label="Filter by category">
+        @for (filter of categoryFilters; track filter.value) {
+          <button
+            type="button"
+            role="tab"
+            class="chip"
+            [class.is-active]="activeCategory() === filter.value"
+            [attr.aria-selected]="activeCategory() === filter.value"
+            (click)="setCategory(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-stack">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <app-skeleton height="48px" />
+        }
+      </div>
+    } @else if (transactions().length === 0) {
+      <app-empty-state
+        icon="bxs-bank"
+        title="No transactions yet"
+        description="Connect a bank account to start seeing your transaction history."
+      >
+        <a routerLink="/my-banks">
+          <app-button variant="primary" size="sm">Connect Bank</app-button>
+        </a>
+      </app-empty-state>
+    } @else if (filteredTransactions().length === 0) {
+      <app-empty-state
+        icon="bx-search-alt"
+        title="No matching transactions"
+        description="Try a different search term or category filter."
+      />
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Merchant</th>
+              <th scope="col">Category</th>
+              <th scope="col">Account</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Status</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of filteredTransactions(); track tx.id) {
+              <tr>
+                <td>{{ tx.merchant }}</td>
+                <td>{{ tx.category | titlecase }}</td>
+                <td>
+                  <span class="account-cell">{{ tx.institutionName }}</span>
+                  <small>{{ tx.accountName }}</small>
+                </td>
+                <td [class.is-credit]="tx.direction === 'credit'">
+                  {{ tx.direction === 'credit' ? '+' : '-' }}{{ tx.amount | currency }}
+                </td>
+                <td><app-badge [variant]="statusVariant[tx.status]">{{ tx.status }}</app-badge></td>
+                <td>{{ tx.date | date: 'MMM d, y' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </app-card>
+</div>

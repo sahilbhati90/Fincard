@@ -1,0 +1,83 @@
+<div class="dashboard animate-in">
+  <header class="dashboard__welcome">
+    <h1>Welcome back, <span>{{ auth.user()?.fullName }}</span></h1>
+    <p>Here's what's happening across your accounts today.</p>
+  </header>
+
+  <app-card class="balance-card">
+    <div class="balance-card__ring" aria-hidden="true">
+      <div class="balance-card__ring-inner"></div>
+    </div>
+    <div class="balance-card__info">
+      @if (summaryLoading()) {
+        <app-skeleton width="140px" height="14px" />
+        <app-skeleton width="200px" height="32px" />
+      } @else {
+        <h3>{{ summary().totalBanks }} Bank Account{{ summary().totalBanks === 1 ? '' : 's' }}</h3>
+        <p>Total Current Balance</p>
+        <h2>{{ summary().totalBalance | currency }}</h2>
+        <app-badge variant="success">
+          <i class="bx bx-trending-up" aria-hidden="true"></i>
+          Live bank summary
+        </app-badge>
+      }
+    </div>
+  </app-card>
+
+  <app-card class="transactions-card" [padding]="'sm'">
+    <div class="transactions-card__head">
+      <h3>Recent Transactions</h3>
+      <div class="transactions-card__actions">
+        <app-button variant="ghost" size="sm" (click)="refreshTransactions()">
+          <i class="bx bx-refresh" aria-hidden="true"></i> Refresh
+        </app-button>
+        <a routerLink="/transactions">
+          <app-button variant="secondary" size="sm">View all</app-button>
+        </a>
+      </div>
+    </div>
+
+    @if (transactionsLoading()) {
+      <div class="transactions-card__loading">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <app-skeleton height="44px" />
+        }
+      </div>
+    } @else if (recentTransactions().length === 0) {
+      <app-empty-state
+        icon="bxs-bank"
+        title="No transactions yet"
+        description="Connect your first bank account to start tracking transactions."
+      >
+        <a routerLink="/my-banks">
+          <app-button variant="primary" size="sm">Connect Bank</app-button>
+        </a>
+      </app-empty-state>
+    } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Merchant</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Status</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tx of recentTransactions(); track tx.id) {
+              <tr>
+                <td>{{ tx.merchant }}</td>
+                <td [class.is-credit]="tx.direction === 'credit'">
+                  {{ tx.direction === 'credit' ? '+' : '-' }}{{ tx.amount | currency }}
+                </td>
+                <td><app-badge [variant]="statusVariant[tx.status]">{{ tx.status }}</app-badge></td>
+                <td>{{ tx.date | date: 'MMM d, y' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </app-card>
+</div>

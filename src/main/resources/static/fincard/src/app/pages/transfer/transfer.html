@@ -1,0 +1,63 @@
+<div class="page animate-in">
+  <header class="page__header">
+    <div>
+      <h1>Transfer Funds</h1>
+      <p>Move money between your connected accounts instantly.</p>
+    </div>
+  </header>
+
+  <div class="transfer-layout">
+    <app-card class="transfer-form">
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label class="field__label" for="from-account">From account</label>
+          <select id="from-account" class="field__control" formControlName="fromAccountId">
+            <option value="" disabled>Select account</option>
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">{{ account.institutionName }} — {{ account.nickname }} ({{ account.balance | currency }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="to-account">To account</label>
+          <select id="to-account" class="field__control" formControlName="toAccountId">
+            <option value="" disabled>Select account</option>
+            @for (account of accounts(); track account.id) {
+              <option [value]="account.id">{{ account.institutionName }} — {{ account.nickname }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="amount">Amount (USD)</label>
+          <input id="amount" type="number" min="1" step="0.01" class="field__control" formControlName="amount" />
+          @if (form.controls.amount.invalid && form.controls.amount.touched) {
+            <span class="field__error">Enter an amount greater than 0.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="note">Note (optional)</label>
+          <input id="note" type="text" class="field__control" formControlName="note" placeholder="e.g. Rent, savings top-up" />
+        </div>
+
+        <app-button type="submit" [block]="true" [loading]="submitting()">
+          <i class="bx bxs-send" aria-hidden="true"></i> Send Transfer
+        </app-button>
+      </form>
+    </app-card>
+
+    <app-card class="transfer-summary" [padding]="'sm'">
+      <h3>Available Balances</h3>
+      <ul class="balance-list">
+        @for (account of accounts(); track account.id) {
+          <li>
+            <span>{{ account.institutionName }} <small>{{ account.nickname }}</small></span>
+            <strong [class.is-negative]="account.balance < 0">{{ account.balance | currency }}</strong>
+          </li>
+        }
+      </ul>
+    </app-card>
+  </div>
+</div>

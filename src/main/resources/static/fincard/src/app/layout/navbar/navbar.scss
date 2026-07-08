@@ -1,0 +1,112 @@
+@use '../../../theme/mixins' as *;
+
+.navbar {
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-6);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-topbar);
+
+  &__menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: var(--space-2);
+    border-radius: var(--radius-sm);
+
+    &:hover { background: var(--surface-sunken); }
+  }
+
+  &__search {
+    flex: 1;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--surface-sunken);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0 var(--space-3);
+    height: 40px;
+    transition: border-color var(--duration-fast) var(--ease-standard);
+
+    &:focus-within { border-color: var(--primary); }
+
+    i { color: var(--muted); font-size: 17px; }
+
+    input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 14px;
+      width: 100%;
+      color: var(--text);
+
+      &::placeholder { color: var(--muted); }
+    }
+  }
+
+  &__actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  &__icon-btn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 19px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-standard);
+
+    &:hover { background: var(--surface-sunken); color: var(--text); }
+  }
+
+  &__badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: var(--radius-full);
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__profile {
+    margin-left: var(--space-2);
+    border-radius: var(--radius-full);
+    display: inline-flex;
+  }
+}
+
+@include respond(md) {
+  .navbar {
+    padding: 0 var(--space-4);
+    &__menu-btn { display: inline-flex; align-items: center; justify-content: center; }
+    &__search { display: none; }
+  }
+}

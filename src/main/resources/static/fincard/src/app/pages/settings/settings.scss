@@ -1,0 +1,109 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 640px;
+
+  &__header h1 { font-size: 22px; }
+  &__header p { color: var(--text-secondary); margin-top: var(--space-1); }
+}
+
+h3 { font-size: 15px; }
+
+.section-desc {
+  color: var(--muted);
+  font-size: 13px;
+  margin: var(--space-1) 0 var(--space-4);
+}
+
+.theme-options {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.theme-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 150ms var(--ease-standard);
+
+  i { font-size: 22px; }
+
+  &:hover { border-color: var(--border-strong); }
+
+  &.is-active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-subtle);
+  }
+}
+
+.toggle-list {
+  display: flex;
+  flex-direction: column;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border);
+    gap: var(--space-4);
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    strong { font-size: 14px; }
+    span { font-size: 12px; color: var(--muted); }
+  }
+}
+
+.switch {
+  width: 44px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 150ms var(--ease-standard);
+
+  &__knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: var(--shadow-xs);
+    transition: transform 150ms var(--ease-standard);
+  }
+
+  &.is-on {
+    background: var(--primary);
+    border-color: var(--primary);
+    .switch__knob { transform: translateX(18px); }
+  }
+}
+
+.danger-zone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}

@@ -1,0 +1,44 @@
+<div class="page animate-in">
+  <header class="page__header">
+    <div>
+      <h1>My Profile</h1>
+      <p>Manage your personal information and account details.</p>
+    </div>
+  </header>
+
+  <div class="profile-layout">
+    <app-card class="profile-summary">
+      <app-avatar [src]="auth.user()?.avatarUrl" [name]="userInitials()" [size]="88" />
+      <h2>{{ auth.user()?.fullName || 'User' }}</h2>
+      <p>{{ auth.user()?.email }}</p>
+      <span class="badge badge--info">{{ auth.user()?.role | titlecase }}</span>
+
+      <div class="profile-stats">
+        <div>
+          <span>Connected Banks</span>
+          <strong>{{ summaryLoading() ? '...' : summary().totalBanks }}</strong>
+        </div>
+        <div>
+          <span>Total Balance</span>
+          <strong>{{ summaryLoading() ? '...' : (summary().totalBalance | currency) }}</strong>
+        </div>
+      </div>
+    </app-card>
+
+    <app-card class="profile-form">
+      <h3>Personal Information</h3>
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <div class="field">
+          <label class="field__label" for="fullName">Full name</label>
+          <input id="fullName" type="text" class="field__control" formControlName="fullName" />
+        </div>
+        <div class="field">
+          <label class="field__label" for="email">Email</label>
+          <input id="email" type="email" class="field__control" formControlName="email" />
+        </div>
+        <p class="profile-note">Email comes from your login account. Name changes are saved in the current app session.</p>
+        <app-button type="submit" [loading]="saving()">Save Changes</app-button>
+      </form>
+    </app-card>
+  </div>
+</div>

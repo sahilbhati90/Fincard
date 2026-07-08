@@ -1,0 +1,53 @@
+<div class="page animate-in">
+  <header class="page__header">
+    <div>
+      <h1>My Bank Accounts</h1>
+      <p>Effortlessly manage your connected banking activities.</p>
+    </div>
+    <app-button (click)="connectBank()" [loading]="connecting()">
+      <i class="bx bxs-plus-circle" aria-hidden="true"></i> Connect Bank
+    </app-button>
+  </header>
+
+  @if (loading()) {
+    <div class="bank-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <app-skeleton height="180px" />
+      }
+    </div>
+  } @else if (accounts().length === 0) {
+    <app-card>
+      <app-empty-state
+        icon="bx-bank"
+        title="No banks connected"
+        description="Connect your first bank account to get started with Fincard."
+      >
+        <app-button (click)="connectBank()" [loading]="connecting()">Connect Bank</app-button>
+      </app-empty-state>
+    </app-card>
+  } @else {
+    <div class="bank-grid">
+      @for (account of accounts(); track account.id) {
+        <app-card [interactive]="true" [padding]="'none'" class="bank-card">
+          <div class="bank-card__top" [style.background]="accountGradient[account.accountType]">
+            <i class="bx {{ accountIcon[account.accountType] }}" aria-hidden="true"></i>
+            @if (account.isPrimary) {
+              <app-badge variant="neutral">Primary</app-badge>
+            }
+          </div>
+          <div class="bank-card__body">
+            <h3>{{ account.institutionName }}</h3>
+            <p class="bank-card__nickname">{{ account.nickname }} •••• {{ account.mask }}</p>
+            <p class="bank-card__balance" [class.is-negative]="account.balance < 0">
+              {{ account.balance | currency }}
+            </p>
+            <div class="bank-card__meta">
+              <app-badge variant="info">{{ account.accountType | titlecase }}</app-badge>
+              <span>Connected {{ account.connectedAt | date: 'MMM d, y' }}</span>
+            </div>
+          </div>
+        </app-card>
+      }
+    </div>
+  }
+</div>

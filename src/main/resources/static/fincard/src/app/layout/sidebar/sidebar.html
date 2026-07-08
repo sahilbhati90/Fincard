@@ -1,0 +1,40 @@
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed()" aria-label="Primary navigation">
+  <a routerLink="/dashboard" class="sidebar__brand">
+    <img src="images/2.png" alt="" class="sidebar__logo" />
+    <span class="sidebar__brand-text">Fincard</span>
+  </a>
+
+  <nav class="sidebar__nav">
+    <ul class="sidebar__group">
+      @for (item of primaryNav; track item.route) {
+        <li>
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="is-active"
+            class="sidebar__link"
+          >
+            <i class="bx {{ item.icon }}" aria-hidden="true"></i>
+            <span class="sidebar__label">{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <ul class="sidebar__group sidebar__group--bottom">
+      @for (item of secondaryNav; track item.route) {
+        <li>
+          <a [routerLink]="item.route" routerLinkActive="is-active" class="sidebar__link">
+            <i class="bx {{ item.icon }}" aria-hidden="true"></i>
+            <span class="sidebar__label">{{ item.label }}</span>
+          </a>
+        </li>
+      }
+      <li>
+        <button type="button" class="sidebar__link sidebar__link--collapse" (click)="collapseToggle.emit()">
+          <i class="bx bx-chevrons-left" aria-hidden="true"></i>
+          <span class="sidebar__label">Collapse</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</aside>

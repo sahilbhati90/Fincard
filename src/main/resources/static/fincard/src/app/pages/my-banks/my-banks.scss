@@ -1,0 +1,75 @@
+@use '../../../theme/mixins' as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+
+    h1 { font-size: 22px; }
+    p { color: var(--text-secondary); margin-top: var(--space-1); }
+  }
+}
+
+.bank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-5);
+}
+
+.bank-card {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  &__top {
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    color: #fff;
+
+    i { font-size: 28px; }
+  }
+
+  &__body {
+    padding: var(--space-5);
+
+    h3 { font-size: 16px; }
+  }
+
+  &__nickname {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: var(--space-1);
+  }
+
+  &__balance {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    margin: var(--space-3) 0;
+
+    &.is-negative { color: var(--danger); }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+  }
+}
+
+@include respond(sm) {
+  .page__header {
+    flex-direction: column;
+  }
+}
